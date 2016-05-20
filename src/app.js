@@ -6,18 +6,19 @@
 
 var UI = require('ui');
 var Vector2 = require('vector2');
+var unirest = require('unirest');
 
 var main = new UI.Card({
-  title: 'Pebble.js',
+  title: 'Random Quote',
   icon: 'images/menu_icon.png',
-  subtitle: 'Hello World!',
-  body: 'Press any button.',
+  // subtitle: ...
+  body: 'Press any button to get a new quote.',
   subtitleColor: 'indigo', // Named colors
   bodyColor: '#9a0036' // Hex colors
 });
 
 main.show();
-
+/*
 main.on('click', 'up', function(e) {
   var menu = new UI.Menu({
     sections: [{
@@ -41,8 +42,23 @@ main.on('click', 'up', function(e) {
   });
   menu.show();
 });
+*/
 
-main.on('click', 'select', function(e) {
+function getQuote(e) {
+  unirest.post("https://andruxnet-random-famous-quotes.p.mashape.com/?cat=movies")
+  .header("X-Mashape-Key", "d3efyiXfa1mshirwLZ34ztyor1JVp11jpGxjsnuIyAs4n8SHp5")
+  .header("Content-Type", "application/x-www-form-urlencoded")
+  .header("Accept", "application/json")
+  .end(function (result) {
+    console.log(result.status, result.headers, result.body);
+    var quotePage = new UI.Card({
+      title: 'Random Quote',
+      body: result.quote + '\n -' + result.author,
+      scrollable: true
+    });
+    quotePage.show();
+  });
+  /*
   var wind = new UI.Window({
     backgroundColor: 'black'
   });
@@ -77,12 +93,13 @@ main.on('click', 'select', function(e) {
   wind.add(radial);
   wind.add(textfield);
   wind.show();
+  */
 });
 
-main.on('click', 'down', function(e) {
-  var card = new UI.Card();
-  card.title('A Card');
-  card.subtitle('Is a Window');
-  card.body('The simplest window type in Pebble.js.');
-  card.show();
+main.on('click', 'select', getQuote);
+main.on('click', 'up', getQuote);
+main.on('click', 'down', getQuote);
+
+main.on('click', 'back', function(e) {
+  main.show();
 });
