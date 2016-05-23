@@ -6,7 +6,7 @@
 
 var UI = require('ui');
 var Vector2 = require('vector2');
-var unirest = require('unirest');
+var http = require('http');
 
 var main = new UI.Card({
   title: 'Random Quote',
@@ -45,6 +45,23 @@ main.on('click', 'up', function(e) {
 */
 
 function getQuote(e) {
+  var properties = { cat:'movies' }
+  var headers = {
+    "X-Mashape-Key": "d3efyiXfa1mshirwLZ34ztyor1JVp11jpGxjsnuIyAs4n8SHp5",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Accept": "application/json"
+  } 
+  request({url:'https://andruxnet-random-famous-quotes.p.mashape.com', properties, headers}, function(err, res, body){
+    if(err) {console.log(err); return; }
+    console.log('get response: '+JSON.stringify(res)); 
+		var body_obj = JSON.parse(body);
+    var quotePage = new UI.Card({
+      title: 'Random Quote',
+      body: body_obj.quote + '\n -' + body_obj.author,
+      scrollable: true
+    });
+  });
+  /*
   unirest.post("https://andruxnet-random-famous-quotes.p.mashape.com/?cat=movies")
   .header("X-Mashape-Key", "d3efyiXfa1mshirwLZ34ztyor1JVp11jpGxjsnuIyAs4n8SHp5")
   .header("Content-Type", "application/x-www-form-urlencoded")
@@ -58,6 +75,7 @@ function getQuote(e) {
     });
     quotePage.show();
   });
+  */
   /*
   var wind = new UI.Window({
     backgroundColor: 'black'
@@ -94,7 +112,7 @@ function getQuote(e) {
   wind.add(textfield);
   wind.show();
   */
-});
+}
 
 main.on('click', 'select', getQuote);
 main.on('click', 'up', getQuote);
@@ -103,3 +121,7 @@ main.on('click', 'down', getQuote);
 main.on('click', 'back', function(e) {
   main.show();
 });
+
+// for testing
+getQuote(null);
+
