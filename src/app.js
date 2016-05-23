@@ -5,8 +5,7 @@
  */
 
 var UI = require('ui');
-var Vector2 = require('vector2');
-var http = require('http');
+var request = require('request');
 
 var main = new UI.Card({
   title: 'Random Quote',
@@ -18,12 +17,10 @@ var main = new UI.Card({
 });
 
 var quotePage = new UI.Card({
-	title: 'Random Quote',
-	body: body_obj.quote + '\n -' + body_obj.author,
-	scrollable: true
+  title: 'Random Quote',
+  body: body_obj.quote + '\n -' + body_obj.author,
+  scrollable: true
 });
-
-main.show();
 
 function getQuote(e) {
   var properties = { cat:'movies' }
@@ -35,8 +32,8 @@ function getQuote(e) {
   request({url:'https://andruxnet-random-famous-quotes.p.mashape.com', properties, headers}, function(err, res, body){
     if(err) {console.log(err); return; }
     console.log('get response: '+JSON.stringify(res)); 
-		var body_obj = JSON.parse(body);
-		quotePage.show();
+    var body_obj = JSON.parse(body);
+    quotePage.show();
   });
 }
 
@@ -50,5 +47,6 @@ quotePage.on('click', 'back', function(e) {
 });
 
 // for testing
-getQuote(null);
+// getQuote(null);
 
+main.show();
