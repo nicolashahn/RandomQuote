@@ -5,7 +5,7 @@
  */
 
 var UI = require('ui');
-var request = require('request');
+var request = require('request-lite');
 
 var main = new UI.Card({
   title: 'Random Quote',
