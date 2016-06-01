@@ -45,8 +45,8 @@ function getQuote(e) {
 	  bodyChunks.push(chunk);
 	}).on('end', function() {
 	  var body = Buffer.concat(bodyChunks);
-	  console.log('BODY: ' + body);
-	  quotePage.body(body.quote + '\n -' + body.author);
+	  body_obj = JSON.parse(body.toString());
+	  quotePage.body = body_obj.quote + '\n -' + body_obj.author;
 	  // ...and/or process the entire body here.
 	})
   });
