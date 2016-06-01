@@ -5,7 +5,6 @@
  */
 
 var UI = require('ui');
-var request = require('request-lite');
 
 var main = new UI.Card({
   title: 'Random Quote',
@@ -23,17 +22,36 @@ var quotePage = new UI.Card({
 });
 
 function getQuote(e) {
-  var properties = { cat:'movies' }
-  var headers = {
-    "X-Mashape-Key": "d3efyiXfa1mshirwLZ34ztyor1JVp11jpGxjsnuIyAs4n8SHp5",
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Accept": "application/json"
-  } 
-  request({url:'https://andruxnet-random-famous-quotes.p.mashape.com', properties, headers}, function(err, res, body){
-    if(err) {console.log(err); return; }
-    console.log('get response: '+JSON.stringify(res)); 
-    var body_obj = JSON.parse(body);
-    quotePage.show();
+  var options = {
+    host: 'andruxnet-random-famous-quotes.p.mashape.com',
+    // port: 80,
+    path: '/?cat=movies',
+    method: 'POST',
+    headers: {
+      "X-Mashape-Key": "d3efyiXfa1mshirwLZ34ztyor1JVp11jpGxjsnuIyAs4n8SHp5",
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Accept": "application/json"
+    }
+  };
+
+  var req = https.get(options, function(res) {
+	console.log('STATUS: ' + res.statusCode);
+	console.log('HEADERS: ' + JSON.stringify(res.headers));
+
+	// Buffer the body entirely for processing as a whole.
+	var bodyChunks = [];
+	res.on('data', function(chunk) {
+	  // You can process streamed parts here...
+	  bodyChunks.push(chunk);
+	}).on('end', function() {
+	  var body = Buffer.concat(bodyChunks);
+	  console.log('BODY: ' + body);
+	  // ...and/or process the entire body here.
+	})
+  });
+
+  req.on('error', function(e) {
+	console.log('ERROR: ' + e.message);
   });
 }
 
@@ -47,6 +65,6 @@ quotePage.on('click', 'back', function(e) {
 });
 
 // for testing
-// getQuote(null);
+getQuote(null);
 
 main.show();
