@@ -5,6 +5,7 @@
  */
 
 var UI = require('ui');
+var https = require('https');
 
 var main = new UI.Card({
   title: 'Random Quote',
@@ -15,11 +16,7 @@ var main = new UI.Card({
   // bodyColor: '#9a0036' // Hex colors
 });
 
-var quotePage = new UI.Card({
-  title: 'Random Quote',
-  body: 'Press select for quote',
-  scrollable: true
-});
+main.show();
 
 function getQuote(e) {
   var options = {
@@ -35,20 +32,22 @@ function getQuote(e) {
   };
 
   var req = https.get(options, function(res) {
-	console.log('STATUS: ' + res.statusCode);
-	console.log('HEADERS: ' + JSON.stringify(res.headers));
+  	console.log('STATUS: ' + res.statusCode);
+  	console.log('HEADERS: ' + JSON.stringify(res.headers));
 
-	// Buffer the body entirely for processing as a whole.
-	var bodyChunks = [];
-	res.on('data', function(chunk) {
-	  // You can process streamed parts here...
-	  bodyChunks.push(chunk);
-	}).on('end', function() {
-	  var body = Buffer.concat(bodyChunks);
-	  body_obj = JSON.parse(body.toString());
-	  quotePage.body = body_obj.quote + '\n -' + body_obj.author;
-	  // ...and/or process the entire body here.
-	})
+  	var bodyChunks = [];
+  	res.on('data', function(chunk) {
+  	  bodyChunks.push(chunk);
+  	}).on('end', function() {
+  	  var body = Buffer.concat(bodyChunks);
+  	  body_obj = JSON.parse(body.toString());
+      var quotePage = new UI.Card({
+        title: 'Random Quote',
+        body: body_obj.quote + '\n -' + body_obj.author,
+        scrollable: true
+      });
+  	  quotePage.show();
+  	})
   });
 
   req.on('error', function(e) {
@@ -57,11 +56,11 @@ function getQuote(e) {
   });
 }
 
-main.on('click', 'select', function(e) { getQuote(e); });
-main.on('click', 'up', function(e) { getQuote(e); });
-main.on('click', 'down', function(e) { getQuote(e); });
+main.on('click', 'select', getQuote);
+main.on('click', 'up', getQuote);
+main.on('click', 'down', getQuote);
 
-quotePage('click', 'select', function(e) { getQuote(e); });
+quotePage('click', 'select', getQuote);
 quotePage.on('click', 'back', function(e) {
   main.show();
 });
@@ -69,4 +68,3 @@ quotePage.on('click', 'back', function(e) {
 // for testing
 // getQuote(null);
 
-main.show();
