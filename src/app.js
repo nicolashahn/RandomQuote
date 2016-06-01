@@ -10,7 +10,7 @@ var main = new UI.Card({
   title: 'Random Quote',
   // icon: 'images/menu_icon.png',
   // subtitle: ...
-  body: 'Press any button to get a new quote.',
+  body: 'Press any button to get a new quote.'
   // subtitleColor: 'indigo', // Named colors
   // bodyColor: '#9a0036' // Hex colors
 });
@@ -46,7 +46,7 @@ function getQuote(e) {
 	}).on('end', function() {
 	  var body = Buffer.concat(bodyChunks);
 	  console.log('BODY: ' + body);
-	  quotePage.body(body.quote + '\n -' body.author);
+	  quotePage.body(body.quote + '\n -' + body.author);
 	  // ...and/or process the entire body here.
 	})
   });
@@ -67,6 +67,6 @@ quotePage.on('click', 'back', function(e) {
 });
 
 // for testing
-getQuote(null);
+// getQuote(null);
 
 main.show();
