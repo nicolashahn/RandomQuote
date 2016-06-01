@@ -8,16 +8,16 @@ var UI = require('ui');
 
 var main = new UI.Card({
   title: 'Random Quote',
-  icon: 'images/menu_icon.png',
+  // icon: 'images/menu_icon.png',
   // subtitle: ...
   body: 'Press any button to get a new quote.',
-  subtitleColor: 'indigo', // Named colors
-  bodyColor: '#9a0036' // Hex colors
+  // subtitleColor: 'indigo', // Named colors
+  // bodyColor: '#9a0036' // Hex colors
 });
 
 var quotePage = new UI.Card({
   title: 'Random Quote',
-  body: body_obj.quote + '\n -' + body_obj.author,
+  body: 'Press select for quote',
   scrollable: true
 });
 
@@ -46,12 +46,14 @@ function getQuote(e) {
 	}).on('end', function() {
 	  var body = Buffer.concat(bodyChunks);
 	  console.log('BODY: ' + body);
+	  quotePage.body(body.quote + '\n -' body.author);
 	  // ...and/or process the entire body here.
 	})
   });
 
   req.on('error', function(e) {
 	console.log('ERROR: ' + e.message);
+	quotePage.body('Error getting quote');
   });
 }
 
