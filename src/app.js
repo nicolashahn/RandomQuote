@@ -57,11 +57,11 @@ function getQuote(e) {
   });
 }
 
-main.on('click', 'select', getQuote);
-main.on('click', 'up', getQuote);
-main.on('click', 'down', getQuote);
+main.on('click', 'select', function(e) { getQuote(e); });
+main.on('click', 'up', function(e) { getQuote(e); });
+main.on('click', 'down', function(e) { getQuote(e); });
 
-quotePage('click', 'select', getQuote);
+quotePage('click', 'select', function(e) { getQuote(e); });
 quotePage.on('click', 'back', function(e) {
   main.show();
 });
