@@ -15,6 +15,8 @@ var main = new UI.Card({
   // bodyColor: '#9a0036' // Hex colors
 });
 
+main.show();
+
 var quotePage = new UI.Card({
   title: 'Random Quote',
   body: 'Press select for quote',
@@ -57,11 +59,11 @@ function getQuote(e) {
   });
 }
 
-main.on('click', 'select', function(e) { getQuote(e); });
-main.on('click', 'up', function(e) { getQuote(e); });
-main.on('click', 'down', function(e) { getQuote(e); });
+main.on('click', 'select', getQuote);
+main.on('click', 'up', getQuote);
+main.on('click', 'down', getQuote);
 
-quotePage('click', 'select', function(e) { getQuote(e); });
+quotePage('click', 'select', getQuote);
 quotePage.on('click', 'back', function(e) {
   main.show();
 });
@@ -69,4 +71,3 @@ quotePage.on('click', 'back', function(e) {
 // for testing
 // getQuote(null);
 
-main.show();
