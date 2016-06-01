@@ -5,6 +5,7 @@
  */
 
 var UI = require('ui');
+var https = require('https');
 
 var main = new UI.Card({
   title: 'Random Quote',
@@ -16,12 +17,6 @@ var main = new UI.Card({
 });
 
 main.show();
-
-var quotePage = new UI.Card({
-  title: 'Random Quote',
-  body: 'Press select for quote',
-  scrollable: true
-});
 
 function getQuote(e) {
   var options = {
@@ -37,25 +32,27 @@ function getQuote(e) {
   };
 
   var req = https.get(options, function(res) {
-	console.log('STATUS: ' + res.statusCode);
-	console.log('HEADERS: ' + JSON.stringify(res.headers));
+        console.log('STATUS: ' + res.statusCode);
+        console.log('HEADERS: ' + JSON.stringify(res.headers));
 
-	// Buffer the body entirely for processing as a whole.
-	var bodyChunks = [];
-	res.on('data', function(chunk) {
-	  // You can process streamed parts here...
-	  bodyChunks.push(chunk);
-	}).on('end', function() {
-	  var body = Buffer.concat(bodyChunks);
-	  body_obj = JSON.parse(body.toString());
-	  quotePage.body = body_obj.quote + '\n -' + body_obj.author;
-	  // ...and/or process the entire body here.
-	})
+        var bodyChunks = [];
+        res.on('data', function(chunk) {
+          bodyChunks.push(chunk);
+        }).on('end', function() {
+          var body = Buffer.concat(bodyChunks);
+          body_obj = JSON.parse(body.toString());
+          var quotePage = new UI.Card({
+            title: 'Random Quote',
+            body: body_obj.quote + '\n -' + body_obj.author,
+            scrollable: true
+          });
+          quotePage.show();
+        })
   });
 
   req.on('error', function(e) {
-	console.log('ERROR: ' + e.message);
-	quotePage.body = 'Error getting quote';
+        console.log('ERROR: ' + e.message);
+        quotePage.body = 'Error getting quote';
   });
 }
 
