@@ -5,7 +5,7 @@
  */
 
 var UI = require('ui');
-var https = require('https');
+var ajax = require('ajax');
 
 var main = new UI.Card({
   title: 'Random Quote',
@@ -19,48 +19,30 @@ var main = new UI.Card({
 main.show();
 
 function getQuote(e) {
-  var options = {
-    host: 'andruxnet-random-famous-quotes.p.mashape.com',
-    // port: 80,
-    path: '/?cat=movies',
-    method: 'POST',
-    headers: {
-      "X-Mashape-Key": "d3efyiXfa1mshirwLZ34ztyor1JVp11jpGxjsnuIyAs4n8SHp5",
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Accept": "application/json"
-    }
+  
+  var url = 'andruxnet-random-famous-quotes.p.mashape.com/?cat=movies';
+  var headers = {
+    "X-Mashape-Key": "d3efyiXfa1mshirwLZ34ztyor1JVp11jpGxjsnuIyAs4n8SHp5",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Accept": "application/json"
   };
-
-  var req = https.get(options, function(res) {
-        console.log('STATUS: ' + res.statusCode);
-        console.log('HEADERS: ' + JSON.stringify(res.headers));
-
-        var bodyChunks = [];
-        res.on('data', function(chunk) {
-          bodyChunks.push(chunk);
-        }).on('end', function() {
-          var body = Buffer.concat(bodyChunks);
-          body_obj = JSON.parse(body.toString());
-          var quotePage = new UI.Card({
-            title: 'Random Quote',
-            body: body_obj.quote + '\n -' + body_obj.author,
-            scrollable: true
-          });
-          quotePage.show();
-        })
+  ajax({url:url, headers:headers}, function(data) {
+    console.log(data);
+    var quotePage = new UI.Card({
+      title: 'Random Quote',
+      body: data.quote + '\n -' + data.author,
+      scrollable: true
+    });
+    quotePage.show();
   });
-
-  req.on('error', function(e) {
-        console.log('ERROR: ' + e.message);
-        quotePage.body = 'Error getting quote';
-  });
+  
 }
 
 main.on('click', 'select', getQuote);
 main.on('click', 'up', getQuote);
 main.on('click', 'down', getQuote);
 
-quotePage('click', 'select', getQuote);
+quotePage.on('click', 'select', getQuote);
 quotePage.on('click', 'back', function(e) {
   main.show();
 });
